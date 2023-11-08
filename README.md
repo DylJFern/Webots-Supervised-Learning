@@ -3,7 +3,7 @@
 In this project we explore the world of robotics and machine learning through the lens of Webots, an open-source realistic 3D robot development environment used to design and model, program and simulate, as well as visualize robotics, equipped with an extensive library of robot models, sensors, actuators, environments, and so on.
 
 ## Supervised Learning
-Supervised learning is a fundamental concept in machine learning, a subfield of artificial intelligence. It involves training a machine learning algorithm on a labeled dataset, where each data point is associated with a known outcome. The algorithm learns to map input data to the correct output by generalizing from the training examples. This enables the algorithm to make predictions or decisions on new, unseen data. In other words, supervised learning algorithms learn from historical data to make future predictions or decisions.
+Supervised learning is a fundamental concept in machine learning, a subfield of artificial intelligence. It involves training a machine learning algorithm on a labeled dataset, where each data point is associated with a known outcome. The algorithm learns to map input data to the correct output by generalizing from the training examples. This enables the algorithm to make predictions or decisions on new, unseen (test) data. In other words, supervised learning algorithms learn from historical data to make future predictions or decisions.
 
 <div align="center">
   <img src="https://github.com/DylJFern/Webots-Supervised-Learning/assets/128000630/899000c5-e11e-4e30-b555-a97e874eda63" alt="Supervised Learning">
