@@ -97,7 +97,7 @@ Within each of the training environments, we would follow a relative path to end
 
 Essentially, we would travel forward (ideally, in a direction with the largest distance measurements) and attempt to reduce them (to values close to zero) at which point an obstacle obscures our path, then in an attempt to avoid the obstacle we turn in a direction that would again maximize these readings (last seen, at the instance just before the turn is performed). In other words, for this learning approach, the robot would more or less "hug" the obstacle as it travels alongside it, and only made turns when an obstacle blocked the front of the robot.
 
-### Example Training Paths
+### Example Training Paths 1
 <div align="center">
   <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/training_paths1.jpg" alt="Training Environment 1 - Example Paths">
 </div>
@@ -117,7 +117,7 @@ Essentially, we would travel forward (ideally, in a direction with the largest d
 </div>
 <p align="center"><i>Figure 5: Training Environment 3 - Example Paths</i></p>
 
-Above are the three training environments used to train the robot with example paths we (as the user) would take to arrive at the predefined destination, and throughout the training process we can see that these paths may vary. For example, in [Figure 3](Example-Training-Paths) we may take sharp turns (hold `'A'` or `'D'` until the robot has rotated 90 degrees - defined by 'red' and 'blue' paths), gradual turns (defined by the 'green' path), or incremental turns (defined by the 'orange' path).
+Above are the three training environments used to train the robot with example paths we (as the user) would take to arrive at the predefined destination, and throughout the training process we can see that these paths may vary. For example, in [Figure 3](#example-training-paths) we may take sharp turns (hold `'A'` or `'D'` until the robot has rotated 90 degrees - defined by 'red' and 'blue' paths), gradual turns (defined by the 'green' path), or incremental turns (defined by the 'orange' path).
 
 Although it is cruical we stick to those 'important factors' previously listed for training, it is just as beneficial to include some variation in how it is trained such that the robot is exposed to different scenarios and can adapt accordingly. Alone, this variation does not produce successful results, but when combined into a single DataFrame that is used to train the model(s), it would be able to make effective predictions. An example seen [here](https://drive.google.com/drive/folders/1ECIexPmrRcgrG8U1BK7BgpV55TZMp_gV), where the robot was trained on the same environment in different ways and for different durations (`train_lidar_data{i}`) with each trained dataset fit to a Random Forest Classifier model (using default parameters) and tested in two different environments (`test{j}_lidar_data{i}`). 
 
@@ -132,5 +132,45 @@ Here we see that:
   * Did not have much data to successfully navigate the testing environments.
   * Performed better than the previously trained `train_lidar_data2` model due to more refined turns with sufficient space.
 
-> Note: These example videos of train (user control) and test (autonomous) provided were initially performed to showcase how the robot would respond and get a idea for what the results may look like on simple environments (which have now all been used strictly for training as seen in the [example training paths section](Example-Training-Paths). New test environments (not showcased yet) were created to provide more of a challenge.
+> Note 1: These example videos of train (user control) and test (autonomous) provided were initially performed to showcase how the robot would respond and get a idea for what the results may look like on simple environments (which have now all been used strictly for training as seen in the [example training paths section](#example-training-paths). New test environments (not showcased yet) were created to provide more of a challenge.
+> 
+> Note 2: The LIDAR sensor type used in the videos was later replaced another type to correct problems associated with the original one, but the training concepts are the same.
 
+### Example Training Paths 2
+With the models trained on the data obtained by controlling the robot in the training environments, we had tested the robot in the testing environments. What we noticed was the robot still required additional training on specific situations that it may encounter in the testing environments.
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/additional_training_paths.jpg" alt="Training Environment 3 - Additional Example Paths">
+</div>
+<p align="center"><i>Figure 6: Training Environment 3 - Additional Example Paths</i></p>
+
+Additional training was performed on specific situations such as the robot's ability in turning out of a corner, performing left- and right-hand as well as 180 degree/U-turns, and avoiding obstacles along the path (not just boundary ones, e.g. the border).
+
+## Testing
+The test environments were ideated and modeled over the duration of the project to help encapsulate complex environments but at the same time were reasonable such that the models fit to the training data should be able to make predictions on unseen data (or an unseen environment with familiar features).
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/webots/worlds/.mars_test1.jpg" alt="Testing Environment 1">
+</div>
+<p align="center"><i>Figure 7: Testing Environment 1</i></p>
+
+<br>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/webots/worlds/.mars_test2.jpg" alt="Testing Environment 2">
+</div>
+<p align="center"><i>Figure 8: Testing Environment 2</i></p>
+
+The Random Forest Classifier model was the initial algorithm selected when doing initial testing and was predominantly used as it was able to make accurate decisions in most cases when predicting inputs based on new unseen LIDAR data. However, it was still not without its faults (which will be later on with current issues - which could mainly be due to how the model is trained or even undertrained in additional situations). With the test environments fine tuned, we noticed that Random Forest Classifier was still able to successfully navigate the obstacles. However, we wanted to see how other models would compare, as such we introduced Logistic Regression, MLP Classifier, and XGBoost using "default" parameters and introduced hyperparameter tuning with grid search for all four models (for a total of 8 models).
+
+### Issues
+While the Random Forest Classifier is able to successfully navigate the test environment, it can still to fail to make correct decisions in certain situations as seen in these [videos](https://drive.google.com/drive/folders/1LCVFectN9OZ4fpbs6eDZ-ISFXEkipZut).
+
+* in `rfc_model_issue1.mp4`, we can see the robot will turn in the direction of the largest LIDAR sensor readings, but it fails to generalize. The robot does not know what an open area is, it has been trained on environments where it is surrounded by obstacles and can make simple decisions where readings on one side may be larger or smaller than readings on the other side. While it is trained to move in the direction with the largest distances and attempt to reduce it, it is 'centered' where readings on both sides are approximately equal and so it "jitters" left and right trying to make a decision.
+* in `rfc_model_issue2.mp4`, we can see that even slight variations can effect the robot's behaviour, but this issue could most likely be fixed just by training the robot to perform tighter turns. At the instance just before the right turn, the robot knows the furthest LIDAR readings are to the right; however, it overturns and is unable to fully correct itself (due to a lack of training data in such a situation), as such its wheel gets stuck on the edge of the wall. Had we extended the vertical or even horizontal just a bit further out or in, the robot should have no trouble avoiding the obstacles and getting stuck.
+* in `rfc_model_issue3.mp4`, we can see somewhat a similar situation to the previous. In this case, the robot initially detects the furthest distance away coming out of the left turn as the corner and continues "hugging" the wall; however, when it gets close it realizes this is indeed not the case and attempts to perform a right turn but ends up getting stuck in a similar situation as the issue seen in `rfc_model_issue1.mp4` where it cannot make the decision on what direction to turn. In addition, the robot was never trained to reverse (`'S'`), had it been it may have been able to correct itself, but the reason it was not trained to reverse is because it contradicts how it has been trained (in other words, it wants to travel to the furthest distance way to reduce it and perform a turn to avoid colliding with the obstacle, if it were to reverse do the opposite by increasing this distance from the wall).
+* in `rfc_model_issue4.mp4`, while it may seem obvious based on how it was trained or what the user would do, even though the robot wants to go to the right side of the environment world, it still fails to determine what direction to turn as it does what to reduce that distance, but at the same time it wants to avoid the obstacle, and so on.
+
+So, when we mention the testing environments were ideated and modeled over the duration of the project, it was more they were designed and slightly modified such that it would create a challenge but would not introduce untrained or undertrained elements. The issues with the Random Forest Classifier model would also be consistent with the other models regardless of how "good" it is or how "well" tuned it is.
+
+## Evaluation Metrics
