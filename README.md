@@ -117,7 +117,7 @@ Essentially, we would travel forward (ideally, in a direction with the largest d
 </div>
 <p align="center"><i>Figure 5: Training Environment 3 - Example Paths</i></p>
 
-Above are the three training environments used to train the robot with example paths we (as the user) would take to arrive at the predefined destination, and throughout the training process we can see that these paths may vary. For example, in [Figure 3](#example-training-paths) we may take sharp turns (hold `'A'` or `'D'` until the robot has rotated 90 degrees - defined by 'red' and 'blue' paths), gradual turns (defined by the 'green' path), or incremental turns (defined by the 'orange' path).
+Above are the three training environments used to train the robot with example paths we (as the user) would take to arrive at the predefined destination, and throughout the training process we can see that these paths may vary. For example, in [Figure 3](README.md#example-training-paths) we may take sharp turns (hold `'A'` or `'D'` until the robot has rotated 90 degrees - defined by 'red' and 'blue' paths), gradual turns (defined by the 'green' path), or incremental turns (defined by the 'orange' path).
 
 Although it is cruical we stick to those 'important factors' previously listed for training, it is just as beneficial to include some variation in how it is trained such that the robot is exposed to different scenarios and can adapt accordingly. Alone, this variation does not produce successful results, but when combined into a single DataFrame that is used to train the model(s), it would be able to make effective predictions. An example seen [here](https://drive.google.com/drive/folders/1ECIexPmrRcgrG8U1BK7BgpV55TZMp_gV), where the robot was trained on the same environment in different ways and for different durations (`train_lidar_data{i}`) with each trained dataset fit to a Random Forest Classifier model (using default parameters) and tested in two different environments (`test{j}_lidar_data{i}`). 
 
@@ -132,7 +132,7 @@ Here we see that:
   * Did not have much data to successfully navigate the testing environments.
   * Performed better than the previously trained `train_lidar_data2` model due to more refined turns with sufficient space.
 
-> Note 1: These example videos of train (user control) and test (autonomous) provided were initially performed to showcase how the robot would respond and get a idea for what the results may look like on simple environments (which have now all been used strictly for training as seen in the [example training paths section](#example-training-paths). New test environments (not showcased yet) were created to provide more of a challenge.
+> Note 1: These example videos of train (user control) and test (autonomous) provided were initially performed to showcase how the robot would respond and get a idea for what the results may look like on simple environments (which have now all been used strictly for training as seen in the [example training paths section](README.md#example-training-paths). New test environments (not showcased yet) were created to provide more of a challenge.
 > 
 > Note 2: The LIDAR sensor type used in the videos was later replaced another type to correct problems associated with the original one, but the training concepts are the same.
 
@@ -174,3 +174,18 @@ While the Random Forest Classifier is able to successfully navigate the test env
 So, when we mention the testing environments were ideated and modeled over the duration of the project, it was more they were designed and slightly modified such that it would create a challenge but would not introduce untrained or undertrained elements. The issues with the Random Forest Classifier model would also be consistent with the other models regardless of how "good" it is or how "well" tuned it is.
 
 ## Evaluation Metrics
+To get a sense of model performance, we can look at measures such as time-based (how long was the robot able to travel for without getting stuck), distance to obstacle (how efficient the robot was at avoiding obstacles), and decision-making (how accurate was the robot at predicting the correct actions), as accuracy alone does not 'paint the full picture'.
+
+### Time-Based
+If it was not already evident, Random Forest Classifier with "default" parameters was able to successfully navigate both environments. We noticed that logitistic regression and its hyperparameter tuned variant were not able to properly distinguish between the majority class (`'W'`) and underrepresented classes (`'A'` and `'D'`), as such it was not even able to perform simple turns. In terms of performance Random Forest Classifier, XGBoost, and MLP Classifier have the potential to outperform Logistic Regression (which they did) on complex, non-linear problems. 
+
+However, when comparing XGBoost and MLP Classifier to Random Forest Classifier, the "default" and "best" parameter variations failed to correctly distinguish between the classes during testing. This could be due to the fact that Random Forest Classifier typically has fewer hyperparameters to tune compared to MLP and XGBoost, it is known for its robustness to noisy data and outliers by filtering out irrelevant information, and is well-suited for imbalanced datasets (which is the case in this problem). XGBoost and MLP Classifier have a higher tuning complexitiy, but they were not fully utilized (instead typical/common parameters and values were used due to hyperparameter tuning being a computation expensive and time consuming process) which might be why these "best" parameter models failed to perform compared to their "default" parameter models or failed to compete with Random Forest Classifier.
+
+### Distance-to-Obstacle
+In 'test environment 2', we can see that all models were effective at maintaining a distance of approximately 0.2 units from the obstacle (e.g. the wall). However, in 'test environment 1', we notice that the Random Forest Classifier was consistently better at maintaining a sufficient distance from the obstacle, making it more successful at avoidance, thereby allowing it to travel further. For instance, the more distance from the obstacle, the easier it would be for the robot to make the distances as well as perform better turns (as previously mentioned, we never really training the robot with tight turns - which could be an undesired result of why models like XGBoost and MLP Classifier were unable to travel further).
+
+However, this information should also be taken 'with a grain of salt', as the amount of data available for Random Forest Classifier is significantly larger compared to that of other models (as it was able to run longer, so it was stopped later). An example of this can be seen in 'test environment 2' when we simulate Logistic Regression even after we know it is unable to turn and just continues to drive forwards (in other words, as we introduce more data - simulate Logistic Regression longer, we notice that its average distance-to-obstacles is significantly lower).
+
+### Decision-Making
+#### Training Data (Input)
+
