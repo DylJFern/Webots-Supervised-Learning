@@ -1,0 +1,8 @@
+log_reg_model: 3.648 seconds
+best_log_reg_model: 3.552 seconds
+rfc_model: 398.432 seconds
+best_rfc_model: 120.672 seconds
+mlpc_model: 71.936 seconds
+best_mlpc_model: 3.968 seconds
+xgboost_model: 121.696 seconds
+best_xgboost_model: 13.728 seconds

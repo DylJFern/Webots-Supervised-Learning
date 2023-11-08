@@ -1,0 +1,293 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Soil.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/SolarCell.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
+  position -3.9276961251624527e-10 -3.9277072331969317e-10 8.712237827392071
+}
+TexturedBackground {
+  texture "mars"
+}
+TexturedBackgroundLight {
+  texture "mars"
+  luminosity 0
+}
+RectangleArena {
+  floorSize 3.5 3.5
+  wallThickness 0.05
+  wallHeight 0.35
+  wallAppearance Soil {
+    color 0 0 0
+  }
+}
+Wall {
+  translation -0.23 -0.98 0
+  size 3.05 0.05 0.35
+  appearance Soil {
+    color 0 0 0
+  }
+}
+Wall {
+  translation -0.1 0.98 0
+  name "wall(1)"
+  size 2.275 0.05 0.35
+  appearance Soil {
+    color 0 0 0
+  }
+}
+Wall {
+  translation 1.02 0 0
+  rotation 0 0 1 1.5707996938995747
+  name "wall(2)"
+  size 2.01 0.05 0.35
+  appearance Soil {
+    color 0 0 0
+  }
+}
+Wall {
+  translation -1.02 0 0
+  rotation 0 0 1 1.5707996938995747
+  name "wall(3)"
+  size 2.01 0.05 0.35
+  appearance Soil {
+    color 0 0 0
+  }
+}
+Wall {
+  translation -0.66 1.59 0
+  rotation 0 0 1 1.5707996938995747
+  name "wall(4)"
+  size 0.35 0.05 0.35
+  appearance Soil {
+    color 0 0 0
+  }
+}
+Robot {
+  translation -1.5001537735524568 -1.499537988266685 0.04904540888017436
+  rotation 4.78428147682651e-07 0.002250892039157338 0.999997466739191 3.1411638596315408
+  children [
+    Lidar {
+      translation 0 -0.11 0.05
+      rotation 0 0 1 -1.5707996938995747
+      children [
+        DEF sq_base Solid {
+          translation 0 0 -0.0425
+          children [
+            DEF sq_base Shape {
+              appearance SolarCell {
+              }
+              geometry Box {
+                size 0.05 0.05 0.05
+              }
+            }
+          ]
+          boundingObject DEF sq_base Shape {
+            appearance SolarCell {
+            }
+            geometry Box {
+              size 0.05 0.05 0.05
+            }
+          }
+          locked TRUE
+        }
+        DEF cyl_base Solid {
+          translation 0 0 -0.014
+          children [
+            DEF cyl_base Shape {
+              appearance SolarCell {
+              }
+              geometry Cylinder {
+                height 0.0075
+                radius 0.0225
+              }
+            }
+          ]
+          name "solid(1)"
+          boundingObject USE cyl_base
+          locked TRUE
+        }
+        DEF cyl_outer Solid {
+          children [
+            DEF cyl_outer Shape {
+              appearance SolarCell {
+              }
+              geometry Cylinder {
+                height 0.02
+                radius 0.02
+              }
+            }
+          ]
+          name "solid(2)"
+          boundingObject USE cyl_outer
+          locked TRUE
+        }
+        DEF sq_conn Solid {
+          translation -0.0215 0 -0.01
+          rotation 0 0 1 1.5708292168517681
+          children [
+            DEF sq_conn Shape {
+              appearance SolarCell {
+              }
+              geometry Box {
+                size 0.01 0.005 0.015
+              }
+            }
+          ]
+          name "solid(3)"
+          boundingObject USE sq_conn
+          locked TRUE
+        }
+      ]
+      locked TRUE
+      horizontalResolution 128
+      fieldOfView 3.14159
+      numberOfLayers 1
+      maxRange 5
+    }
+    DEF body Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+      }
+      geometry Box {
+        size 0.2 0.3 0.05
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 107.93203664716414
+        anchor 0.1125 -0.07 0
+      }
+      device [
+        RotationalMotor {
+          name "front_left_wheel"
+        }
+      ]
+      endPoint Solid {
+        translation 0.1125 -0.07 0
+        rotation -0.468492780803147 -0.7490177228533792 -0.46849435982397175 -1.855851571011602
+        children [
+          DEF wheel Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+            }
+            geometry Cylinder {
+              height 0.025
+              radius 0.05
+            }
+          }
+        ]
+        boundingObject USE wheel
+        physics DEF wheel_physics Physics {
+        }
+        locked TRUE
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 153.9950597791463
+        anchor -0.1125 -0.07 0
+      }
+      device [
+        RotationalMotor {
+          name "front_right_wheel"
+        }
+      ]
+      endPoint Solid {
+        translation -0.1125 -0.07 0
+        rotation -0.7069618706510024 0.02016092741579565 -0.7069642497689471 3.1012764010809613
+        children [
+          DEF wheel Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+            }
+            geometry Cylinder {
+              height 0.025
+              radius 0.05
+            }
+          }
+        ]
+        name "solid(1)"
+        boundingObject USE wheel
+        physics DEF wheel_physics Physics {
+        }
+        locked TRUE
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 107.9322006859112
+        anchor 0.1125 0.07 0
+      }
+      device [
+        RotationalMotor {
+          name "rear_left_wheel"
+        }
+      ]
+      endPoint Solid {
+        translation 0.1125 0.07 0
+        rotation 0.4685407274421564 0.7489577381869162 0.468542306668153 1.8559284257915067
+        children [
+          DEF wheel Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+            }
+            geometry Cylinder {
+              height 0.025
+              radius 0.05
+            }
+          }
+        ]
+        name "solid(2)"
+        boundingObject USE wheel
+        physics DEF wheel_physics Physics {
+        }
+        locked TRUE
+      }
+    }
+    HingeJoint {
+      jointParameters HingeJointParameters {
+        position 153.9952361314842
+        anchor -0.1125 0.07 0
+      }
+      device [
+        RotationalMotor {
+          name "rear_right_wheel"
+        }
+      ]
+      endPoint Solid {
+        translation -0.1125 0.07 0
+        rotation -0.7069609800864294 0.02022329023440536 -0.7069633591405781 3.101151726865728
+        children [
+          DEF wheel Shape {
+            appearance PBRAppearance {
+              baseColor 0 0 0
+            }
+            geometry Cylinder {
+              height 0.025
+              radius 0.05
+            }
+          }
+        ]
+        name "solid(3)"
+        boundingObject USE wheel
+        physics DEF wheel_physics Physics {
+        }
+        locked TRUE
+      }
+    }
+  ]
+  boundingObject USE body
+  physics Physics {
+  }
+  controller "user_control"
+  linearVelocity 1.1568253374270779e-15 -2.78348478896387e-15 5.684341886080802e-17
+  angularVelocity 2.233199139600338e-16 1.136109412605619e-16 1.224536844993247e-15
+}
