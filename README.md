@@ -182,10 +182,51 @@ If it was not already evident, Random Forest Classifier with "default" parameter
 However, when comparing XGBoost and MLP Classifier to Random Forest Classifier, the "default" and "best" parameter variations failed to correctly distinguish between the classes during testing. This could be due to the fact that Random Forest Classifier typically has fewer hyperparameters to tune compared to MLP and XGBoost, it is known for its robustness to noisy data and outliers by filtering out irrelevant information, and is well-suited for imbalanced datasets (which is the case in this problem). XGBoost and MLP Classifier have a higher tuning complexitiy, but they were not fully utilized (instead typical/common parameters and values were used due to hyperparameter tuning being a computation expensive and time consuming process) which might be why these "best" parameter models failed to perform compared to their "default" parameter models or failed to compete with Random Forest Classifier.
 
 ### Distance-to-Obstacle
-In 'test environment 2', we can see that all models were effective at maintaining a distance of approximately 0.2 units from the obstacle (e.g. the wall). However, in 'test environment 1', we notice that the Random Forest Classifier was consistently better at maintaining a sufficient distance from the obstacle, making it more successful at avoidance, thereby allowing it to travel further. For instance, the more distance from the obstacle, the easier it would be for the robot to make the distances as well as perform better turns (as previously mentioned, we never really training the robot with tight turns - which could be an undesired result of why models like XGBoost and MLP Classifier were unable to travel further).
+In '[test environment 2](https://drive.google.com/drive/folders/1GsqW1eqElkXM3ZpYG7s-LWtDq16zsEEa)', we can see that all models were effective at maintaining a distance of approximately 0.2 units from the obstacle (e.g. the wall). However, in '[test environment 1](https://drive.google.com/drive/folders/1bceqO_et1zOKtDafcC8bbPMSAqjvGEcN)', we notice that the Random Forest Classifier was consistently better at maintaining a sufficient distance from the obstacle, making it more successful at avoidance, thereby allowing it to travel further. For instance, the more distance from the obstacle, the easier it would be for the robot to make the distances as well as perform better turns (as previously mentioned, we never really training the robot with tight turns - which could be an undesired result of why models like XGBoost and MLP Classifier were unable to travel further).
 
 However, this information should also be taken 'with a grain of salt', as the amount of data available for Random Forest Classifier is significantly larger compared to that of other models (as it was able to run longer, so it was stopped later). An example of this can be seen in 'test environment 2' when we simulate Logistic Regression even after we know it is unable to turn and just continues to drive forwards (in other words, as we introduce more data - simulate Logistic Regression longer, we notice that its average distance-to-obstacles is significantly lower).
 
 ### Decision-Making
 #### Training Data (Input)
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_training.PNG" alt="Training: Mean Distance Measurement Across LIDAR Range Index ">
+</div>
+<p align="center"><i>Figure 9: Training - Mean Distance Measurements Across LIDAR Range Index</i></p>
 
+This graph depicts the mean distance measurement (or LIDAR range) across all of its 128 indices using a 95% confidence interval. For the training data, this says that we were driving forward with almost equal distance to obstacles on both sides and lots of room in front, we were turning left when seeing a obstacle close on our left but more open space on the right, and when we were turning right we would see an obstacle more closely on our right than left.
+
+#### Testing Data (Action) - Test Environment 2
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_best_log_reg.PNG" alt="Testing: best_log_reg - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_log_reg.PNG" alt="Testing: log_reg - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_best_mplc.PNG" alt="Testing: best_mlpc - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_mplc.PNG" alt="Testing: mlpc - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_best_rfc.PNG" alt="Testing: best_rfc - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_rfc.PNG" alt="Testing: rfc - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_best_xgboost.PNG" alt="Testing: best_xgboost - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+
+<div align="center">
+  <img src="https://github.com/DylJFern/Webots-Supervised-Learning/blob/master/images/128_mean_dist_value_testing_xgboost.PNG" alt="Testing: xgboost - Mean Distance Measurements Across LIDAR Range Index ">
+</div>
+<p align="center"><i>Figure 10: Testing - Mean Distance Measurements Across LIDAR Range Index</i></p>
+
+For the testing data (for 'test environment 2'), we notice that Random Forest Classifier is able to most closely replicate the behaviour seen in training (user control) within a testing environment (through predicted actions). This is indicated by its ability to make decisions in real-time more effectively than the other models examined. One may notice that "best_log_reg" and "log_reg" do not have any plots for `'A'` and `'D'` control, and once again (as seen in the video) this is due to its inability to make complex non-linear decisions leading to inproper classification (in other words, Logistic Regression was unable to perform any turns as it was not able to distinguish `'A'` and `'D'` classes from `'W'` due to them being underrepresented).
